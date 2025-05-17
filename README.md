@@ -1,16 +1,88 @@
-# Reown AppKit Example using ethers (next.js with App Router)
+# Alpha Point Suite
 
-This is a Next.js project.
+A modern Web3 application built with Next.js and ethers.js, powered by Reown AppKit.
 
-## Usage
+## 🚀 Features
 
-1. Go to [Reown Cloud](https://cloud.reown.com) and create a new project.
-2. Copy your `Project ID`
-3. Rename `.env.example` to `.env` and paste your `Project ID` as the value for `NEXT_PUBLIC_PROJECT_ID`
-4. Run `pnpm install` to install dependencies
-5. Run `pnpm run dev` to start the development server
+- Next.js 15 with App Router
+- TypeScript support
+- Ethers.js v6 integration
+- Reown AppKit integration
+- Modern React 19
+- ESLint configuration
+- Environment variable support
 
-## Resources
+## 📦 Prerequisites
 
-- [Reown — Docs](https://docs.reown.com)
-- [Next.js — Docs](https://nextjs.org/docs)
+- Node.js (Latest LTS version recommended)
+- pnpm package manager
+
+## 🛠️ Installation
+
+1. Clone the repository:
+```bash
+git clone [your-repository-url]
+cd alpha-point-suite
+```
+
+2. Install dependencies:
+```bash
+pnpm install
+```
+
+3. Configure environment variables:
+   - Go to [Reown Cloud](https://cloud.reown.com) and create a new project
+   - Copy your `Project ID`
+   - Create a `.env` file in the root directory
+   - Add your Project ID: `NEXT_PUBLIC_PROJECT_ID=your_project_id`
+
+## 🏃‍♂️ Development
+
+Start the development server:
+```bash
+pnpm dev
+```
+
+The application will be available at `http://localhost:3000`
+
+## 🏗️ Build
+
+Build the application for production:
+```bash
+pnpm build
+```
+
+Start the production server:
+```bash
+pnpm start
+```
+
+## 📚 Project Structure
+
+```
+src/
+├── app/          # Next.js app router pages
+├── components/   # React components
+├── config/       # Configuration files
+├── constants/    # Constants and enums
+├── context/      # React context providers
+└── hooks/        # Custom React hooks
+```
+
+## 🔧 Available Scripts
+
+- `pnpm dev` - Start development server
+- `pnpm build` - Build for production
+- `pnpm start` - Start production server
+- `pnpm lint` - Run ESLint
+
+## 📖 Resources
+
+- [Reown Documentation](https://docs.reown.com)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Ethers.js Documentation](https://docs.ethers.org)
+- [React Documentation](https://react.dev)
+
+## 📝 License
+
+[Your License]
