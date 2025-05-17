@@ -23,10 +23,9 @@ export const Approve = () => {
 
     const [selectedTime, setSelectedTime] = useState('10')
     const [approveToken, setApproveToken] = useState(false)
-    const [activeTime, setActiveTime] = useState(false)
     
     const AlphaBot = "0xEB4386a28aE5797eecF8eB6d29c4873E0405BB62"
-    let alphaTokenAddress = (selectedPair?.alphaTokenAddress ?? "0x783c3f003f172c6Ac5AC700218a357d2D66Ee2a2")
+    const alphaTokenAddress = (selectedPair?.alphaTokenAddress ?? "0x783c3f003f172c6Ac5AC700218a357d2D66Ee2a2")
 
     const ERC20_ABI = [
         "function approve(address spender, uint256 amount) external returns (bool)",
@@ -79,7 +78,6 @@ export const Approve = () => {
                     const tx = await AlphaBotContract.activeTime(Math.floor(Date.now() / 1000)  + parseInt(selectedTime) * 60);
                     console.log(tx.hash);
                     await tx.wait();
-                    setActiveTime(true);
                     console.log("Active time set.");
                     window.location.reload();
                 } catch (error) {

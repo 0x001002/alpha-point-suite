@@ -17,6 +17,15 @@ const TokenDeadline = () => {
   const { chainId } = useAppKitNetworkCore();
   const { walletProvider } = useAppKitProvider<Provider>("eip155");
   const [activeTimeStamp, setActiveTimeStamp] = React.useState<number | null>(null);
+  const [currentTime, setCurrentTime] = React.useState<number>(Date.now());
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 10000); 
+
+    return () => clearInterval(timer);
+  }, []);
 
   React.useEffect(() => {
     const fetchActiveTimeStamp = async () => {
@@ -42,7 +51,7 @@ const TokenDeadline = () => {
   }, [address, walletProvider, chainId]);
 
   const deadlineInfo = [
-    { address: address, deadline: activeTimeStamp ? activeTimeStamp : null, status: activeTimeStamp ? (activeTimeStamp * 1000) > Date.now() ? 'Active' : 'Expired' : null },
+    { address: address, deadline: activeTimeStamp ? activeTimeStamp : null, status: activeTimeStamp ? (activeTimeStamp * 1000) > currentTime ? 'Active' : 'Expired' : null },
   ];
 
     return (
