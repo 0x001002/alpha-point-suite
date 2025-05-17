@@ -1,0 +1,126 @@
+.pairContainer {
+    transition: all 0.2s ease-in-out;
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 16px 24px;
+    width: 100%;
+    min-height: 64px;
+    margin: 20px 0;
+}
+
+.pairContainer:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-color: #D1D5DB;
+}
+
+.tableRow {
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+    justify-content: space-between;
+    position: relative;
+}
+
+.tableRow::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 20px;
+    height: 1px;
+    background-color: #E5E7EB;
+    z-index: 0;
+}
+
+.rightGroup {
+    display: flex;
+    gap: 48px;
+    padding-left: 380px;
+}
+
+.tableCell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    flex: 0 1 auto;
+    padding: 0 32px;
+}
+
+.tableLabel {
+    font-weight: 500;
+    color: #4B5563;
+    font-size: 0.875rem;
+    position: relative;
+    z-index: 1;
+    background-color: white;
+    padding: 0 4px;
+}
+
+.tableValue {
+    color: #6B7280;
+    font-size: 1rem;
+    margin-top: 4px;
+}
+
+.tokenIcons {
+    display: flex;
+    align-items: center;
+}
+
+.tokenIcon {
+    border-radius: 50%;
+    object-fit: cover;
+    border: #111827 1px solid;
+}
+
+.tokenIcon:last-child {
+    margin-left: -12px;
+}
+
+
+/* Modal styles */
+.modalContent {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modalRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.modalRow:last-child {
+    border-bottom: none;
+}
+
+.modalRow span:first-child {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.modalRow span:last-child {
+    font-weight: 500;
+    color: #111827;
+}
+
+.modalRowItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.modalRowItem>*:first-child {
+    margin-right: 100px;
+}
+
+.modalRowItem>*:last-child {
+    margin-left: 0;
+}

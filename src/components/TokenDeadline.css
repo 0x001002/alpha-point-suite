@@ -1,0 +1,53 @@
+.deadline-table-container {
+    padding: 20px;
+    background-color: #ffffff;
+    width: 80%;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+}
+
+.deadline-table-container h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.deadline-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+}
+
+.deadline-table th,
+.deadline-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.deadline-table th {
+    background-color: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+}
+
+.deadline-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.deadline-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* 响应式设计 */
+@media screen and (max-width: 768px) {
+    .deadline-table-container {
+        padding: 10px;
+    }
+
+    .deadline-table th,
+    .deadline-table td {
+        padding: 8px 10px;
+    }
+}

@@ -1,0 +1,36 @@
+.header {
+    width: 100%;
+    background-color: white;
+    color: white;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logoLink {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: opacity 0.2s ease;
+}
+
+.logoLink:hover {
+    opacity: 0.8;
+}
+
+.logo {
+    border-radius: 9999px;
+}
+
+.title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: black;
+}
