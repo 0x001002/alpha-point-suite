@@ -50,9 +50,13 @@
     .deadline-table th,
     .deadline-table td {
         padding: 8px 10px;
+        font-size: 0.9rem;
     }
 
     .address-column {
-        display: none;
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 }

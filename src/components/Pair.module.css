@@ -129,7 +129,7 @@
 @media (max-width: 640px) {
     .pairContainer {
         padding: 12px;
-        margin: 12px 0;
+        margin: 12px 8px;
     }
 
     .tableRow {
@@ -142,20 +142,26 @@
         padding-left: 0;
         width: 100%;
         justify-content: space-between;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     .tableCell {
         gap: 8px;
         padding: 0 8px;
+        min-width: 80px;
     }
 
     .tableLabel {
         font-size: 0.75rem;
+        white-space: nowrap;
     }
 
     .tableValue {
         font-size: 0.875rem;
         margin-top: 2px;
+        white-space: nowrap;
     }
 
     .tokenIcon:last-child {
