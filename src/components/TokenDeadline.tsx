@@ -60,7 +60,7 @@ const TokenDeadline = () => {
         <table className="deadline-table">
           <thead>
             <tr>
-              <th>Address</th>
+              <th className="address-column">Address</th>
               <th>Deadline</th>
               <th>Status</th>
             </tr>
@@ -68,7 +68,7 @@ const TokenDeadline = () => {
           <tbody>
             {deadlineInfo.map((info, index) => (
               <tr key={index}>
-                <td>{info.address}</td>
+                <td className="address-column">{info.address}</td>
                 <td>{info.deadline ? new Date(info.deadline * 1000).toLocaleString() : ''}</td>
                 <td>{info.status}</td>
               </tr>

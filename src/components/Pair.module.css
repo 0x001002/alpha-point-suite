@@ -124,3 +124,58 @@
 .modalRowItem>*:last-child {
     margin-left: 0;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 640px) {
+    .pairContainer {
+        padding: 12px;
+        margin: 12px 0;
+    }
+
+    .tableRow {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .rightGroup {
+        gap: 24px;
+        padding-left: 0;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .tableCell {
+        gap: 8px;
+        padding: 0 8px;
+    }
+
+    .tableLabel {
+        font-size: 0.75rem;
+    }
+
+    .tableValue {
+        font-size: 0.875rem;
+        margin-top: 2px;
+    }
+
+    .tokenIcon:last-child {
+        margin-left: -8px;
+    }
+
+    .modalContent {
+        padding: 8px;
+        gap: 12px;
+    }
+
+    .modalRow {
+        padding: 12px;
+    }
+
+    .modalRowItem {
+        gap: 12px;
+    }
+
+    .modalRowItem>*:first-child {
+        margin-right: 0;
+    }
+}
