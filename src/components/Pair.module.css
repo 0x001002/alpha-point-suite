@@ -73,7 +73,7 @@
 .tokenIcon {
     border-radius: 50%;
     object-fit: cover;
-    border: #111827 1px solid;
+    border: #b9bcc0 1px solid;
 }
 
 .tokenIcon:last-child {
