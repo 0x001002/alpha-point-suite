@@ -21,7 +21,7 @@ A modern Web3 application built with Next.js and ethers.js, powered by Reown App
 
 1. Clone the repository:
 ```bash
-git clone [your-repository-url]
+git clone [repository-url]
 cd alpha-point-suite
 ```
 
