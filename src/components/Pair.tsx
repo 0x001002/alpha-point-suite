@@ -26,7 +26,7 @@ export default function Pair(props: PairProps) {
                     selectedPair?.token1Symbol === props.token1Symbol;
 
   const handleClick = () => {
-    setShowModal(true);
+    //todo: setShowModal(true);
   };
 
   return (
