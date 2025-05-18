@@ -32,7 +32,7 @@ const TokenDeadline = () => {
       if (!address || !walletProvider || !isConnected) return;
       
       const provider = new BrowserProvider(walletProvider, chainId);
-      const AlphaBot = "0xEB4386a28aE5797eecF8eB6d29c4873E0405BB62";
+      const AlphaBot = "0x9D435328Ca00195557a97884CBE94EBF3Aa007E7";
       const AlphaBot_ABI = [
         "function activeTimeStampMap(address) view returns (uint256)",
       ];

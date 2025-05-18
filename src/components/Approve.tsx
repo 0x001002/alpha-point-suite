@@ -24,7 +24,7 @@ export const Approve = () => {
     const [selectedTime, setSelectedTime] = useState('10')
     const [approveToken, setApproveToken] = useState(false)
     
-    const AlphaBot = "0xEB4386a28aE5797eecF8eB6d29c4873E0405BB62"
+    const AlphaBot = "0x9D435328Ca00195557a97884CBE94EBF3Aa007E7"
     const alphaTokenAddress = (selectedPair?.alphaTokenAddress ?? "0x783c3f003f172c6Ac5AC700218a357d2D66Ee2a2")
 
     const ERC20_ABI = [
@@ -104,7 +104,7 @@ export const Approve = () => {
                 <span className={styles.selectLabel}>Set Active Time</span>
             </div>
             <button className={styles.button} onClick={handleApprove}>
-                {approveToken ? "Set Active Time" : "Approve Token"}
+                {approveToken ? "Set Active Time" : `Approve ${selectedPair?.token0Symbol} Token`}
             </button>
         </div>
     );
