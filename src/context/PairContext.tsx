@@ -8,15 +8,18 @@ type Pair = (typeof PAIRS)[number];
 interface PairContextType {
   selectedPair: Pair | null;
   setSelectedPair: React.Dispatch<React.SetStateAction<Pair | null>>;
+  lastApproveTimeUpdate: number;
+  setLastApproveTimeUpdate: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const PairContext = createContext<PairContextType | undefined>(undefined);
 
 export function PairProvider({ children }: { children: ReactNode }) {
   const [selectedPair, setSelectedPair] = useState<Pair | null>(PAIRS[0]);
+  const [lastApproveTimeUpdate, setLastApproveTimeUpdate] = useState<number>(Date.now());
 
   return (
-    <PairContext.Provider value={{ selectedPair, setSelectedPair }}>
+    <PairContext.Provider value={{ selectedPair, setSelectedPair, lastApproveTimeUpdate, setLastApproveTimeUpdate }}>
       {children}
     </PairContext.Provider>
   );

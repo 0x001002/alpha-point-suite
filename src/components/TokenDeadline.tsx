@@ -12,10 +12,13 @@ import {
   BrowserProvider,
 } from "ethers";
 import { ethers } from 'ethers';
+import { usePair } from '@/context/PairContext';
+
 const TokenDeadline = () => { 
   const { address, isConnected } = useAppKitAccount();
   const { chainId } = useAppKitNetworkCore();
   const { walletProvider } = useAppKitProvider<Provider>("eip155");
+  const { lastApproveTimeUpdate } = usePair();
   const [activeTimeStamp, setActiveTimeStamp] = React.useState<number | null>(null);
   const [currentTime, setCurrentTime] = React.useState<number>(Date.now());
 
@@ -32,7 +35,7 @@ const TokenDeadline = () => {
       if (!address || !walletProvider || !isConnected) return;
       
       const provider = new BrowserProvider(walletProvider, chainId);
-      const AlphaBot = "0x9D435328Ca00195557a97884CBE94EBF3Aa007E7";
+      const AlphaBot = "0xc68f783b17b4411F6740A4495d76c8803eF15a62";
       const AlphaBot_ABI = [
         "function activeTimeStampMap(address) view returns (uint256)",
       ];
@@ -48,7 +51,7 @@ const TokenDeadline = () => {
     };
 
     fetchActiveTimeStamp();
-  }, [address, walletProvider, chainId]);
+  }, [address, walletProvider, chainId, lastApproveTimeUpdate]);
 
   const deadlineInfo = [
     { address: address, deadline: activeTimeStamp ? activeTimeStamp : null, status: activeTimeStamp ? (activeTimeStamp * 1000) > currentTime ? 'Active' : 'Expired' : null },
@@ -56,13 +59,13 @@ const TokenDeadline = () => {
 
     return (
       <div className="deadline-table-container">
-        <h3>Token Deadlines</h3>
+        <h3>Token 有效期</h3>
         <table className="deadline-table">
           <thead>
             <tr>
-              <th className="address-column">Address</th>
-              <th>Deadline</th>
-              <th>Status</th>
+              <th className="address-column">地址</th>
+              <th>有效期</th>
+              <th>状态</th>
             </tr>
           </thead>
           <tbody>

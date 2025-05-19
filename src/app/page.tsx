@@ -12,8 +12,9 @@ export default function Home() {
     <div className="pages">
       <Header />
       <div style={{ height: "40px" }}></div>
-      <h1 className="text-3xl font-bold">Alpha Point Suite</h1>
-      <p className="text-lg text-gray-600">Track BSC Swaps for Zero Slippage Execution</p>
+      <h1 className="text-3xl font-bold">Alpha Point</h1>
+      <p className="text-lg text-gray-600">追踪BSC交易，实现零滑点交易</p>
+      <p className="text-lg text-gray-600">每笔交易需要预存费用0.001BNB（包括Gas费、捆绑费、节点费）</p>
       <div>
         <Pair
           token0Symbol={selectedPair?.token0Symbol ?? "B2"}
