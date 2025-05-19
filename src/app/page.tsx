@@ -4,6 +4,7 @@ import { Header } from "@/components/Header";
 import Pair from "@/components/Pair";
 import { Approve } from "@/components/Approve";
 import TokenDeadline from "@/components/TokenDeadline";
+import SwapEvent from "@/components/SwapEvent";
 import { usePair } from "@/context/PairContext";
 
 export default function Home() {
@@ -15,7 +16,7 @@ export default function Home() {
       <h1 className="text-3xl font-bold sm:text-3xl text-2xl text-center sm:text-left">Alpha Point</h1>
       <div className="sm:block">
         <p className="text-lg text-gray-600 sm:text-lg text-base text-center sm:text-left">追踪BSC交易，实现零滑点交易</p>
-        <p className="text-lg text-gray-600 sm:text-lg text-base text-center sm:text-left">每笔交易需要预存费用0.001BNB（包括Gas费、捆绑费、节点费）</p>
+        <p className="text-lg text-gray-600 sm:text-lg text-base text-center sm:text-left">每笔交易费用包括池子手续费、Gas费、捆绑费和节点费</p>
       </div>
       <div>
         <Pair
@@ -29,6 +30,7 @@ export default function Home() {
       </div>
       <Approve />
       <TokenDeadline />
+      <SwapEvent />
     </div>
   );
 }

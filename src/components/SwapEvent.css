@@ -1,0 +1,98 @@
+.swap-event-container {
+    padding: 20px;
+    background-color: #ffffff;
+    width: 80%;
+    border-radius: 8px;
+    border: 1px solid #E5E7EB;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+}
+
+.swap-event-container h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.swap-event-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+}
+
+.swap-event-table th,
+.swap-event-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.swap-event-table th {
+    background-color: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+}
+
+.swap-event-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.swap-event-table tr:last-child td {
+    border-bottom: none;
+}
+
+.address-column {
+    font-family: monospace;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.page-button {
+    padding: 8px 12px;
+    border: 1px solid #E5E7EB;
+    background-color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.page-button:hover {
+    background-color: #f8f9fa;
+}
+
+.page-button.active {
+    background-color: #2563eb;
+    color: white;
+    border-color: #2563eb;
+}
+
+/* 响应式设计 */
+@media screen and (max-width: 768px) {
+    .swap-event-container {
+        padding: 10px;
+        width: 95%;
+        margin: 10px auto;
+    }
+
+    .swap-event-table th,
+    .swap-event-table td {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+
+    .address-column {
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}

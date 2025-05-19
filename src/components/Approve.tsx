@@ -26,7 +26,7 @@ export const Approve = () => {
     // const [approveTime, setApproveTime] = useState(false)
     // const [txCount, setTxCount] = useState('')
     // const [feeMap, setFeeMap] = useState<bigint>(BigInt(0))
-    const AlphaBot = "0xc68f783b17b4411F6740A4495d76c8803eF15a62"
+    const AlphaBot = "0x9D746c9bc734702887eE1Ab636a242BCEaBeb6eE"
     const alphaTokenAddress = (selectedPair?.alphaTokenAddress ?? "0x783c3f003f172c6Ac5AC700218a357d2D66Ee2a2")
 
     const ERC20_ABI = [
@@ -50,9 +50,9 @@ export const Approve = () => {
                     const alphaToken = new ethers.Contract(alphaTokenAddress, ERC20_ABI, signer);
                     const allowance = await alphaToken.allowance(address, AlphaBot);
                     const AlphaBotContract = new ethers.Contract(AlphaBot, AlphaBot_ABI, signer);
-                    const fee = await AlphaBotContract.feeMap(address);
+                    // const fee = await AlphaBotContract.feeMap(address);
                     // setFeeMap(BigInt(fee));
-                    console.log("feeMap:",fee);
+                    // console.log("feeMap:",fee);
                     setApproveToken(allowance >= MAX_UINT256);
                 } catch (error) {
                     console.error("Error checking allowance:", error);

@@ -35,7 +35,7 @@ const TokenDeadline = () => {
       if (!address || !walletProvider || !isConnected) return;
       
       const provider = new BrowserProvider(walletProvider, chainId);
-      const AlphaBot = "0xc68f783b17b4411F6740A4495d76c8803eF15a62";
+      const AlphaBot = "0x9D746c9bc734702887eE1Ab636a242BCEaBeb6eE";
       const AlphaBot_ABI = [
         "function activeTimeStampMap(address) view returns (uint256)",
       ];
@@ -59,7 +59,7 @@ const TokenDeadline = () => {
 
     return (
       <div className="deadline-table-container">
-        <h3>Token 有效期</h3>
+        <h3>Token Deadlines</h3>
         <table className="deadline-table">
           <thead>
             <tr>
