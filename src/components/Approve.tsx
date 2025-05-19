@@ -176,14 +176,14 @@ export const Approve = () => {
                     className={styles.input}
                 />
                 <button 
-                    className={styles.button}
+                    className={styles.smallButton}
                     onClick={handleDeposit}
                     disabled={!txCount || !isConnected}
                 >
                     存款
                 </button>
                 <button 
-                    className={styles.button}
+                    className={styles.smallButton}
                     onClick={handleRefund}
                     disabled={!isConnected || Number(feeMap) === 0}
                 >

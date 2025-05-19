@@ -4,7 +4,7 @@ import './globals.css';
 import ContextProvider from '@/context'
 
 export const metadata: Metadata = {
-  title: "Alpha Point Suite",
+  title: "Alpha Point",
   description: "Track BSC Swaps for Zero Slippage Execution",
   icons:{
     icon: "/logo.png",
