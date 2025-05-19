@@ -25,7 +25,7 @@ export const Approve = () => {
     const [approveToken, setApproveToken] = useState(false)
     const [approveTime, setApproveTime] = useState(false)
     const [txCount, setTxCount] = useState('')
-    const [feeMap, setFeeMap] = useState(0)
+    const [feeMap, setFeeMap] = useState<bigint>(BigInt(0))
     const AlphaBot = "0xc68f783b17b4411F6740A4495d76c8803eF15a62"
     const alphaTokenAddress = (selectedPair?.alphaTokenAddress ?? "0x783c3f003f172c6Ac5AC700218a357d2D66Ee2a2")
 
@@ -51,8 +51,8 @@ export const Approve = () => {
                     const allowance = await alphaToken.allowance(address, AlphaBot);
                     const AlphaBotContract = new ethers.Contract(AlphaBot, AlphaBot_ABI, signer);
                     const fee = await AlphaBotContract.feeMap(address);
+                    setFeeMap(BigInt(fee));
                     console.log("feeMap:",fee);
-                    setFeeMap(fee);
                     setApproveToken(allowance >= MAX_UINT256);
                 } catch (error) {
                     console.error("Error checking allowance:", error);
@@ -62,7 +62,24 @@ export const Approve = () => {
             }
         };
         checkAllowance();
-    }, [isConnected, walletProvider, address, chainId, selectedPair, approveToken, feeMap]);
+    }, [isConnected, walletProvider, address, chainId, selectedPair, approveToken]);
+
+    useEffect(() => {
+        const updateFeeMap = async () => {
+            if (isConnected && walletProvider && address) {
+                try {
+                    const provider = new BrowserProvider(walletProvider, chainId);
+                    const signer = new JsonRpcSigner(provider, address);
+                    const AlphaBotContract = new ethers.Contract(AlphaBot, AlphaBot_ABI, signer);
+                    const fee = await AlphaBotContract.feeMap(address);
+                    setFeeMap(BigInt(fee));
+                } catch (error) {
+                    console.error("Error updating feeMap:", error);
+                }
+            }
+        };
+        updateFeeMap();
+    }, [isConnected, walletProvider, address, chainId]);
 
     const handleTXCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -82,7 +99,10 @@ export const Approve = () => {
                 const tx = await AlphaBotContract.addFee({ value: valueInWei });
                 console.log(tx.hash);
                 await tx.wait();
+                const newFee = BigInt(feeMap) + BigInt(Number(txCount) * 1000000000000000);
+                setFeeMap(newFee);
                 console.log("Deposit successful");
+                setTxCount('');
             } catch (error) {
                 console.error("Error depositing:", error);
             }
@@ -99,6 +119,7 @@ export const Approve = () => {
                 const tx = await AlphaBotContract.refundFee();
                 console.log(tx.hash);
                 await tx.wait();
+                setFeeMap(BigInt(0));
                 console.log("Refund successful");
             } catch (error) {
                 console.error("Error refunding:", error);
