@@ -98,6 +98,7 @@
 @media screen and (max-width: 768px) {
     .container {
         padding: 4px;
+        gap: 2px;
     }
 
     .actionContainer {
