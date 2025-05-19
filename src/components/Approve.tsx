@@ -23,7 +23,6 @@ export const Approve = () => {
 
     const [selectedTime, setSelectedTime] = useState('10')
     const [approveToken, setApproveToken] = useState(false)
-    const [approveTime, setApproveTime] = useState(false)
     const [txCount, setTxCount] = useState('')
     const [feeMap, setFeeMap] = useState<bigint>(BigInt(0))
     const AlphaBot = "0xc68f783b17b4411F6740A4495d76c8803eF15a62"
@@ -155,7 +154,6 @@ export const Approve = () => {
                     const tx = await AlphaBotContract.activeTime(activeTime);
                     console.log(tx.hash);
                     await tx.wait();
-                    setApproveTime(true);
                     setLastApproveTimeUpdate(Date.now());
                     console.log("Active time set.");
                 } catch (error) {
