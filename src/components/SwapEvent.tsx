@@ -11,7 +11,6 @@ import {
   BrowserProvider,
 } from "ethers";
 import { ethers } from 'ethers';
-import { usePair } from '@/context/PairContext';
 import './SwapEvent.css';
 
 interface SwapEvent {
