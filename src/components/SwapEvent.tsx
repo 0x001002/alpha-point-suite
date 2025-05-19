@@ -38,7 +38,7 @@ const SwapEvent = () => {
 
       try {
         const provider = new BrowserProvider(walletProvider, chainId);
-        const AlphaBot = "0x9D746c9bc734702887eE1Ab636a242BCEaBeb6eE";
+        const AlphaBot = "0x3ad264b758A6E1EC76b3099d644263db12BCb490";
         const AlphaBot_ABI = [
           "event Swap(address indexed sender, address fromToken, address toToken, uint256 fee)",
         ];

@@ -26,7 +26,7 @@ export const Approve = () => {
     // const [approveTime, setApproveTime] = useState(false)
     // const [txCount, setTxCount] = useState('')
     // const [feeMap, setFeeMap] = useState<bigint>(BigInt(0))
-    const AlphaBot = "0x9D746c9bc734702887eE1Ab636a242BCEaBeb6eE"
+    const AlphaBot = "0x3ad264b758A6E1EC76b3099d644263db12BCb490"
     const alphaTokenAddress = (selectedPair?.alphaTokenAddress ?? "0x783c3f003f172c6Ac5AC700218a357d2D66Ee2a2")
 
     const ERC20_ABI = [

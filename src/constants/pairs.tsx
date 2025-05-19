@@ -16,7 +16,7 @@ export const PAIRS = [
     token0Icon: "/pair/b2.png",
     token1Icon: "/pair/wbnb.png",
     fee: "0.01",
-    tvl: "$2.52M",
+    tvl: "$2.87M",
     alphaTokenAddress: "0x783c3f003f172c6Ac5AC700218a357d2D66Ee2a2"
   },
   {

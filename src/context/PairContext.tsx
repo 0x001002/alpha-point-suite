@@ -15,7 +15,7 @@ interface PairContextType {
 const PairContext = createContext<PairContextType | undefined>(undefined);
 
 export function PairProvider({ children }: { children: ReactNode }) {
-  const [selectedPair, setSelectedPair] = useState<Pair | null>(PAIRS[0]);
+  const [selectedPair, setSelectedPair] = useState<Pair | null>(PAIRS[1]);
   const [lastApproveTimeUpdate, setLastApproveTimeUpdate] = useState<number>(Date.now());
 
   return (
