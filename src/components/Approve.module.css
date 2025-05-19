@@ -78,13 +78,13 @@
     border: 1px solid #E5E7EB;
     border-radius: 8px;
     font-size: 16px;
-    width: 200px;
+    width: calc(100% - 32px);
+    margin: 0 16px;
     transition: all 0.3s ease;
     background-color: #ffffff;
     color: #1a202c;
     outline: none;
 }
-
 
 .input::placeholder {
     color: #a0aec0;
