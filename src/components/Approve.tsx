@@ -49,7 +49,7 @@ export const Approve = () => {
                     const signer = new JsonRpcSigner(provider, address);
                     const alphaToken = new ethers.Contract(alphaTokenAddress, ERC20_ABI, signer);
                     const allowance = await alphaToken.allowance(address, AlphaBot);
-                    const AlphaBotContract = new ethers.Contract(AlphaBot, AlphaBot_ABI, signer);
+                    // const AlphaBotContract = new ethers.Contract(AlphaBot, AlphaBot_ABI, signer);
                     // const fee = await AlphaBotContract.feeMap(address);
                     // setFeeMap(BigInt(fee));
                     // console.log("feeMap:",fee);

@@ -10,7 +10,7 @@ import {
 import {
   BrowserProvider,
 } from "ethers";
-import { ethers, EventLog } from 'ethers';
+import { ethers } from 'ethers';
 import { usePair } from '@/context/PairContext';
 import './SwapEvent.css';
 
@@ -26,7 +26,6 @@ const SwapEvent = () => {
   const { address, isConnected } = useAppKitAccount();
   const { chainId } = useAppKitNetworkCore();
   const { walletProvider } = useAppKitProvider<Provider>("eip155");
-  const { selectedPair } = usePair();
   const [swapEvents, setSwapEvents] = useState<SwapEvent[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 5;
