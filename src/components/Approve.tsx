@@ -16,13 +16,12 @@ import { ethers } from "ethers";
 import { usePair } from '@/context/PairContext';
 
 export const Approve = () => {
-    const { selectedPair, setLastApproveTimeUpdate } = usePair();
+    const { selectedPair, setLastApproveTimeUpdate, approveToken, setApproveToken } = usePair();
     const { address, isConnected } = useAppKitAccount();
     const { chainId } = useAppKitNetworkCore();
     const { walletProvider } = useAppKitProvider<Provider>("eip155");
 
     const [selectedTime, setSelectedTime] = useState('10')
-    const [approveToken, setApproveToken] = useState(false)
     // const [approveTime, setApproveTime] = useState(false)
     // const [txCount, setTxCount] = useState('')
     // const [feeMap, setFeeMap] = useState<bigint>(BigInt(0))
@@ -206,10 +205,10 @@ export const Approve = () => {
                     <option value="43200">1 个月</option>
                     <option value="525600">1 年</option>
                 </select>
-                <span className={styles.selectLabel}>设置有效期</span>
+                {/* <span className={styles.selectLabel}>设置有效期</span> */}
             </div>
             <button className={styles.button} onClick={handleApprove}>
-                {approveToken ? "设置有效期" : `授权 ${selectedPair?.token0Symbol} Token`}
+                {approveToken ? "设置有效期" : `授权 ${selectedPair?.token0Symbol}`}
             </button>
         </div>
     );

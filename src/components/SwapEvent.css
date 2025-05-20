@@ -100,13 +100,9 @@
 .bscscan-link {
     color: #1E88E5;
     text-decoration: none;
-    padding: 4px 8px;
-    border-radius: 4px;
-    background-color: #E3F2FD;
     transition: all 0.2s ease;
 }
 
 .bscscan-link:hover {
-    background-color: #BBDEFB;
     color: #1565C0;
 }

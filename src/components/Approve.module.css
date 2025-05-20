@@ -2,7 +2,8 @@
     display: flex;
     gap: 0.5rem;
     align-items: center;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: center;
 }
 
 .actionContainer {
@@ -16,7 +17,7 @@
 
 .selectContainer {
     position: relative;
-    width: 300px;
+    width: 200px;
 }
 
 .select {

@@ -27,6 +27,21 @@
     border-bottom: 1px solid #eee;
 }
 
+.deadline-table th:first-child,
+.deadline-table td:first-child {
+    width: 40%;
+}
+
+.deadline-table th:nth-child(2),
+.deadline-table td:nth-child(2) {
+    width: 30%;
+}
+
+.deadline-table th:last-child,
+.deadline-table td:last-child {
+    width: 30%;
+}
+
 .deadline-table th {
     background-color: #f8f9fa;
     color: #495057;
@@ -39,6 +54,40 @@
 
 .deadline-table tr:last-child td {
     border-bottom: none;
+}
+
+.token-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.token-icon {
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #b9bcc0;
+}
+
+.approve-button {
+    padding: 6px 16px;
+    border-radius: 6px;
+    border: none;
+    background-color: #f7bc27;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+
+.approve-button:hover:not(.disabled) {
+    background-color: #f7bc27c5;
+}
+
+.approve-button.disabled {
+    background-color: #9CA3AF;
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
 /* 响应式设计 */
@@ -61,4 +110,24 @@
         text-overflow: ellipsis;
         white-space: nowrap;
     }
+}
+
+.status-indicator {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #666;
+    white-space: nowrap;
+}
+
+.status-active {
+    background-color: #E6F4EA;
+    color: #1E7E34;
+}
+
+.status-expired {
+    background-color: #FBE9E7;
+    color: #D32F2F;
 }
