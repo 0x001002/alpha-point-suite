@@ -9,7 +9,10 @@ import {
 } from "@reown/appkit/react";
 import {
   BrowserProvider,
+  Contract,
+  type EventLog,
 } from "ethers";
+import { JsonRpcProvider } from 'ethers';
 import { ethers } from 'ethers';
 import './SwapEvent.css';
 
@@ -19,6 +22,7 @@ interface SwapEvent {
   toToken: string;
   fee: string;
   timestamp: number;
+  transactionHash: string;
 }
 
 const SwapEvent = () => {
@@ -48,19 +52,39 @@ const SwapEvent = () => {
         // 清除之前的事件监听器
         AlphaBotContract.removeAllListeners();
         
-        // 获取历史事件
+        // 获取历史事件 - 分批查询
         const filter = AlphaBotContract.filters.SwapTo(address);
-        const events = await AlphaBotContract.queryFilter(filter, -10000, "latest");
+        const batchSize = 10000; // 每批查询的区块数
+        const maxBlocks = 50000; // 最大查询区块数
+        let allEvents: ethers.Log[] = [];
+        
+        // 获取当前区块号
+        const currentBlock = await provider.getBlockNumber();
+        
+        // 分批查询历史事件
+        for (let fromBlock = currentBlock - maxBlocks; fromBlock < currentBlock; fromBlock += batchSize) {
+          const toBlock = Math.min(fromBlock + batchSize - 1, currentBlock);
+          try {
+            const batchEvents = await AlphaBotContract.queryFilter(filter, fromBlock, toBlock);
+            allEvents = [...allEvents, ...batchEvents];
+            console.log(`Queried blocks ${fromBlock} to ${toBlock}`);
+          } catch (error) {
+            console.error(`Error querying blocks ${fromBlock} to ${toBlock}:`, error);
+            // 如果查询失败，等待一段时间后继续
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+        }
         
         // 处理历史事件
-        const historicalEvents = events.map(event => {
-          const log = event as ethers.EventLog;
+        const historicalEvents = allEvents.map(event => {
+          const log = event as EventLog;
           return {
             address: log.args[0].toString(),
             fromToken: log.args[1].toString(),
             toToken: log.args[2].toString(),
             fee: ethers.formatEther(log.args[3]),
             timestamp: Math.floor(Date.now() / 1000),
+            transactionHash: log.transactionHash,
           };
         });
         
@@ -75,6 +99,7 @@ const SwapEvent = () => {
               toToken,
               fee: ethers.formatEther(fee),
               timestamp: Math.floor(Date.now() / 1000),
+              transactionHash: "",
             }, ...prev]);
           }
         });
@@ -111,6 +136,7 @@ const SwapEvent = () => {
             <th>To Token</th> */}
             <th>费用</th>
             <th>时间</th>
+            <th>交易</th>
           </tr>
         </thead>
         <tbody>
@@ -121,6 +147,16 @@ const SwapEvent = () => {
               <td>{event.toToken}</td> */}
               <td>{event.fee} BNB</td>
               <td>{new Date(event.timestamp * 1000).toLocaleString()}</td>
+              <td>
+                <a 
+                  href={`https://bscscan.com/tx/${event.transactionHash}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="bscscan-link"
+                >
+                  查看
+                </a>
+              </td>
             </tr>
           ))}
         </tbody>

@@ -17,7 +17,24 @@ export const Header = () => {
           />
           <span className={styles.title}>Alpha Point</span>
         </Link>
-        <ConnectButton />
+        
+        <div className={styles.rightSection}>
+          <a
+            href="https://t.me/alphapointfun"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.telegramLink}
+          >
+            <Image
+              src="/tel.webp"
+              alt="Telegram"
+              width={24}
+              height={24}
+              className={styles.telegramIcon}
+            />
+          </a>
+          <ConnectButton />
+        </div>
       </div>
     </header>
   );

@@ -16,7 +16,7 @@ export default function Home() {
       <h1 className="text-3xl font-bold sm:text-3xl text-2xl text-center sm:text-left">Alpha Point</h1>
       <div className="sm:block">
         <p className="text-lg text-gray-600 sm:text-lg text-base text-center sm:text-left">追踪BSC交易，实现零滑点交易</p>
-        <p className="text-lg text-gray-600 sm:text-lg text-base text-center sm:text-left">每笔交易费用包括池子手续费、Gas费、捆绑费和节点费</p>
+        <p className="text-lg text-gray-600 sm:text-lg text-base text-center sm:text-left">使用此工具交易时必须取消勾选MEV保护，滑点可以调低(0.1)</p>
       </div>
       <div>
         <Pair
