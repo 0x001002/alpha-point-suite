@@ -70,7 +70,6 @@ const SwapEvent = () => {
             
             if (fromBlock > currentBlock) return;
 
-            const filter = contract.filters.SwapTo(address);
             const logs = await provider.getLogs({
               address: ALPHA_BOT_ADDRESS,
               fromBlock,
