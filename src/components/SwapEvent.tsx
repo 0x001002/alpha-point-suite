@@ -112,8 +112,33 @@ const SwapEvent = () => {
           }
         });
 
+        // 添加新区块监听器
+        provider.on('block', async (blockNumber) => {
+          console.log('New block:', blockNumber);
+          try {
+            const newEvents = await AlphaBotContract.queryFilter(filter, blockNumber, blockNumber);
+            if (newEvents.length > 0) {
+              const processedEvents = newEvents.map(event => {
+                const log = event as EventLog;
+                return {
+                  address: log.args[0].toString(),
+                  fromToken: log.args[1].toString(),
+                  toToken: log.args[2].toString(),
+                  fee: ethers.formatEther(log.args[3]),
+                  timestamp: Math.floor(Date.now() / 1000),
+                  transactionHash: log.transactionHash,
+                };
+              });
+              setSwapEvents(prev => [...processedEvents, ...prev]);
+            }
+          } catch (error) {
+            console.error('Error processing new block events:', error);
+          }
+        });
+
         return () => {
           AlphaBotContract.removeAllListeners();
+          provider.removeAllListeners();
         };
       } catch (error) {
         console.error('Error in fetchSwapEvents:', error);
