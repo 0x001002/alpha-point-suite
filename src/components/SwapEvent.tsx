@@ -280,8 +280,8 @@ const SwapEvent = () => {
               pageNumbers.push(1);
               
               // 计算当前页附近的页码
-              let startPage = Math.max(2, currentPage - 1);
-              let endPage = Math.min(totalPages - 1, currentPage + 1);
+              const startPage = Math.max(2, currentPage - 1);
+              const endPage = Math.min(totalPages - 1, currentPage + 1);
               
               // 调整起始和结束页码，确保显示足够的页码
               if (startPage > 2) {
