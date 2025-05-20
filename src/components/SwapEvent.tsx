@@ -9,7 +9,6 @@ import {
 } from "@reown/appkit/react";
 import {
   BrowserProvider,
-  type EventLog,
 } from "ethers";
 import { ethers } from 'ethers';
 import './SwapEvent.css';
@@ -131,10 +130,8 @@ const SwapEvent = () => {
       if (!isSubscribed || !address) return;
 
       try {
-        const filter = contract.filters.SwapTo(address);
         const batchSize = 1000;
         const maxBlocks = 50000;
-        let allEvents: ethers.Log[] = [];
         
         const currentBlock = await provider.getBlockNumber();
         const fromBlock = Math.max(currentBlock - maxBlocks, 0);
