@@ -97,6 +97,8 @@ const SwapEvent = () => {
           };
         }));
         
+        // 按时间戳降序排序
+        historicalEvents.sort((a, b) => b.timestamp - a.timestamp);
         setSwapEvents(historicalEvents);
         
         // 设置新事件的监听器
