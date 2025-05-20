@@ -54,7 +54,7 @@ const SwapEvent = () => {
         
         // 获取历史事件 - 分批查询
         const filter = AlphaBotContract.filters.SwapTo(address);
-        const batchSize = 10000; // 每批查询的区块数
+        const batchSize = 1000; // 每批查询的区块数
         const maxBlocks = 50000; // 最大查询区块数
         let allEvents: ethers.Log[] = [];
         
@@ -64,14 +64,24 @@ const SwapEvent = () => {
         // 分批查询历史事件
         for (let fromBlock = currentBlock - maxBlocks; fromBlock < currentBlock; fromBlock += batchSize) {
           const toBlock = Math.min(fromBlock + batchSize - 1, currentBlock);
-          try {
-            const batchEvents = await AlphaBotContract.queryFilter(filter, fromBlock, toBlock);
-            allEvents = [...allEvents, ...batchEvents];
-            console.log(`Queried blocks ${fromBlock} to ${toBlock}`);
-          } catch (error) {
-            console.error(`Error querying blocks ${fromBlock} to ${toBlock}:`, error);
-            // 如果查询失败，等待一段时间后继续
-            await new Promise(resolve => setTimeout(resolve, 1000));
+          let retryCount = 0;
+          const maxRetries = 3;
+          
+          while (retryCount < maxRetries) {
+            try {
+              const batchEvents = await AlphaBotContract.queryFilter(filter, fromBlock, toBlock);
+              allEvents = [...allEvents, ...batchEvents];
+              console.log(`Queried blocks ${fromBlock} to ${toBlock}`);
+              break; // 成功查询后跳出重试循环
+            } catch (error) {
+              retryCount++;
+              console.error(`Error querying blocks ${fromBlock} to ${toBlock} (Attempt ${retryCount}/${maxRetries}):`, error);
+              if (retryCount === maxRetries) {
+                console.error(`Failed to query blocks ${fromBlock} to ${toBlock} after ${maxRetries} attempts`);
+              }
+              // 等待时间随重试次数增加
+              await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+            }
           }
         }
         
