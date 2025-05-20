@@ -53,7 +53,7 @@ const SwapEvent = () => {
         // 获取历史事件 - 分批查询
         const filter = AlphaBotContract.filters.SwapTo(address);
         const batchSize = 1000; // 每批查询的区块数
-        const maxBlocks = 50000; // 最大查询区块数
+        const maxBlocks = 1000; // 最大查询区块数
         let allEvents: ethers.Log[] = [];
         
         // 获取当前区块号
