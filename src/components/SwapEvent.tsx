@@ -88,7 +88,7 @@ const SwapEvent = () => {
     };
 
     fetchSwapEvents();
-  }, [walletProvider, chainId, address]);
+  }, [walletProvider, chainId, isConnected, address]);
 
   // Calculate pagination
   const indexOfLastEvent = currentPage * eventsPerPage;
