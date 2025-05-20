@@ -272,37 +272,58 @@ const SwapEvent = () => {
               );
             }
           } else {
-            // 如果总页数大于5，显示前3页、省略号和最后一页
-            // 前3页
-            for (let i = 1; i <= 3; i++) {
-              pages.push(
-                <button
-                  key={i}
-                  onClick={() => handlePageChange(i)}
-                  className={`page-button ${currentPage === i ? 'active' : ''}`}
-                >
-                  {i}
-                </button>
-              );
-            }
+            // 如果总页数大于5，使用动态分页逻辑
+            const showPages = () => {
+              const pageNumbers = [];
+              
+              // 始终显示第一页
+              pageNumbers.push(1);
+              
+              // 计算当前页附近的页码
+              let startPage = Math.max(2, currentPage - 1);
+              let endPage = Math.min(totalPages - 1, currentPage + 1);
+              
+              // 调整起始和结束页码，确保显示足够的页码
+              if (startPage > 2) {
+                pageNumbers.push('...');
+              }
+              
+              for (let i = startPage; i <= endPage; i++) {
+                pageNumbers.push(i);
+              }
+              
+              if (endPage < totalPages - 1) {
+                pageNumbers.push('...');
+              }
+              
+              // 始终显示最后一页
+              if (totalPages > 1) {
+                pageNumbers.push(totalPages);
+              }
+              
+              return pageNumbers;
+            };
             
-            // 省略号
-            pages.push(
-              <span key="ellipsis" className="page-ellipsis">
-                ...
-              </span>
-            );
-            
-            // 最后一页
-            pages.push(
-              <button
-                key={totalPages}
-                onClick={() => handlePageChange(totalPages)}
-                className={`page-button ${currentPage === totalPages ? 'active' : ''}`}
-              >
-                {totalPages}
-              </button>
-            );
+            // 渲染页码按钮
+            showPages().forEach((page, index) => {
+              if (page === '...') {
+                pages.push(
+                  <span key={`ellipsis-${index}`} className="page-ellipsis">
+                    ...
+                  </span>
+                );
+              } else {
+                pages.push(
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page as number)}
+                    className={`page-button ${currentPage === page ? 'active' : ''}`}
+                  >
+                    {page}
+                  </button>
+                );
+              }
+            });
           }
           return pages;
         })()}
