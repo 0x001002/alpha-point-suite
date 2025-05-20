@@ -75,6 +75,15 @@
     border-color: #2563eb;
 }
 
+.page-ellipsis {
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
+    padding: 0 8px;
+    color: #666;
+    user-select: none;
+}
+
 /* 响应式设计 */
 @media screen and (max-width: 768px) {
     .swap-event-container {

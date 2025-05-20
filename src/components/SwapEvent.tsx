@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   useAppKitAccount,
   useAppKitProvider,
@@ -30,12 +30,15 @@ const SwapEvent = () => {
   const [swapEvents, setSwapEvents] = useState<SwapEvent[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 5;
+  const lastProcessedBlockRef = useRef<number>(0);
+  const processedTxHashesRef = useRef<Set<string>>(new Set());
+  const ALPHA_BOT_ADDRESS = "0xcb4C74125CE9f3240DedAE1bf087208C549B1d39";
 
   useEffect(() => {
     let isSubscribed = true;
-    let contract: ethers.Contract | null = null;
+    let pollingInterval: NodeJS.Timeout;
 
-    const setupEventListeners = async () => {
+    const setupPolling = async () => {
       if (!walletProvider || !chainId || !address) {
         console.log('Provider or address not ready:', { walletProvider, chainId, address });
         return;
@@ -43,53 +46,84 @@ const SwapEvent = () => {
 
       try {
         const provider = new BrowserProvider(walletProvider, chainId);
-        const AlphaBot = "0xcb4C74125CE9f3240DedAE1bf087208C549B1d39";
         const AlphaBot_ABI = [
           "event SwapTo(address indexed sender, address fromToken, address toToken, uint256 fee)",
         ];
 
-        // 确保之前的合约实例被清理
-        if (contract) {
-          contract.removeAllListeners();
+        const contract = new ethers.Contract(ALPHA_BOT_ADDRESS, AlphaBot_ABI, provider);
+
+        // Get initial block number if not set
+        if (lastProcessedBlockRef.current === 0) {
+          const currentBlock = await provider.getBlockNumber();
+          lastProcessedBlockRef.current = currentBlock - 1000; // Start from 1000 blocks ago
         }
 
-        contract = new ethers.Contract(AlphaBot, AlphaBot_ABI, provider);
-
-        // 设置事件监听器
-        contract.on("SwapTo", async (sender, fromToken, toToken, fee, event) => {
-          if (!isSubscribed) return;
-          
-          try {
-            if (sender.toLowerCase() === address.toLowerCase()) {
-              const block = await provider.getBlock(event.blockNumber);
-              const newEvent = {
-                address: sender,
-                fromToken,
-                toToken,
-                fee: ethers.formatEther(fee),
-                timestamp: block?.timestamp || Math.floor(Date.now() / 1000),
-                transactionHash: event.log.transactionHash,
-              };
-              console.log('New swap event received:', newEvent);
-              setSwapEvents(prev => [newEvent, ...prev]);
-            }
-          } catch (error) {
-            console.error('Error processing swap event:', error);
-          }
-        });
-
-        // 监听网络变化
-        provider.on('network', (newNetwork, oldNetwork) => {
-          if (oldNetwork) {
-            console.log('Network changed, reconnecting...');
-            setupEventListeners();
-          }
-        });
-
-        // 获取历史事件
+        // Fetch historical events first
         await fetchHistoricalEvents(provider, contract);
+
+        // Setup polling
+        const pollForNewEvents = async () => {
+          if (!isSubscribed) return;
+
+          try {
+            const currentBlock = await provider.getBlockNumber();
+            const fromBlock = lastProcessedBlockRef.current + 1;
+            
+            if (fromBlock > currentBlock) return;
+
+            const filter = contract.filters.SwapTo(address);
+            const logs = await provider.getLogs({
+              address: ALPHA_BOT_ADDRESS,
+              fromBlock,
+              toBlock: currentBlock,
+              topics: [
+                ethers.id("SwapTo(address,address,address,uint256)"),  // 事件签名
+                ethers.zeroPadValue(address, 32)  // 发送者地址（第一个 indexed 参数）
+              ]
+            });
+
+            const newEvents = await Promise.all(
+              logs.map(async (log) => {
+                const event = contract.interface.parseLog(log);
+                const block = await provider.getBlock(log.blockNumber);
+                return {
+                  address: event?.args[0].toString() || '',
+                  fromToken: event?.args[1].toString() || '',
+                  toToken: event?.args[2].toString() || '',
+                  fee: ethers.formatEther(event?.args[3] || 0),
+                  timestamp: block?.timestamp || Math.floor(Date.now() / 1000),
+                  transactionHash: log.transactionHash,
+                };
+              })
+            );
+
+            // Filter out duplicates and add new events
+            const uniqueNewEvents = newEvents.filter(event => 
+              !processedTxHashesRef.current.has(event.transactionHash)
+            );
+
+            if (uniqueNewEvents.length > 0) {
+              uniqueNewEvents.forEach(event => 
+                processedTxHashesRef.current.add(event.transactionHash)
+              );
+
+              setSwapEvents(prev => {
+                const combined = [...uniqueNewEvents, ...prev];
+                return combined.sort((a, b) => b.timestamp - a.timestamp);
+              });
+            }
+
+            lastProcessedBlockRef.current = currentBlock;
+          } catch (error) {
+            console.error('Error polling for new events:', error);
+          }
+        };
+
+        // Poll every 2 seconds
+        pollingInterval = setInterval(pollForNewEvents, 2000);
+
       } catch (error) {
-        console.error('Error setting up event listeners:', error);
+        console.error('Error setting up polling:', error);
       }
     };
 
@@ -103,35 +137,52 @@ const SwapEvent = () => {
         let allEvents: ethers.Log[] = [];
         
         const currentBlock = await provider.getBlockNumber();
+        const fromBlock = Math.max(currentBlock - maxBlocks, 0);
         
-        for (let toBlock = currentBlock; toBlock > currentBlock - maxBlocks; toBlock -= batchSize) {
+        for (let toBlock = currentBlock; toBlock > fromBlock; toBlock -= batchSize) {
           if (!isSubscribed) break;
           
-          const fromBlock = Math.max(toBlock - batchSize + 1, currentBlock - maxBlocks);
+          const batchFromBlock = Math.max(toBlock - batchSize + 1, fromBlock);
           let retryCount = 0;
           const maxRetries = 3;
           
           while (retryCount < maxRetries && isSubscribed) {
             try {
-              const batchEvents = await contract.queryFilter(filter, fromBlock, toBlock);
-              allEvents = [...allEvents, ...batchEvents];
+              const logs = await provider.getLogs({
+                address: ALPHA_BOT_ADDRESS,
+                fromBlock: batchFromBlock,
+                toBlock,
+                topics: [
+                  ethers.id("SwapTo(address,address,address,uint256)"),  // 事件签名
+                  ethers.zeroPadValue(address, 32)  // 发送者地址（第一个 indexed 参数）
+                ]
+              });
               
-              const newEvents = await Promise.all(batchEvents.map(async event => {
-                const log = event as EventLog;
-                const block = await provider.getBlock(event.blockNumber);
+              const newEvents = await Promise.all(logs.map(async log => {
+                const event = contract.interface.parseLog(log);
+                const block = await provider.getBlock(log.blockNumber);
                 return {
-                  address: log.args[0].toString(),
-                  fromToken: log.args[1].toString(),
-                  toToken: log.args[2].toString(),
-                  fee: ethers.formatEther(log.args[3]),
+                  address: event?.args[0].toString() || '',
+                  fromToken: event?.args[1].toString() || '',
+                  toToken: event?.args[2].toString() || '',
+                  fee: ethers.formatEther(event?.args[3] || 0),
                   timestamp: block?.timestamp || Math.floor(Date.now() / 1000),
                   transactionHash: log.transactionHash,
                 };
               }));
-              
-              if (isSubscribed) {
+
+              // Filter out duplicates
+              const uniqueNewEvents = newEvents.filter(event => 
+                !processedTxHashesRef.current.has(event.transactionHash)
+              );
+
+              if (uniqueNewEvents.length > 0) {
+                uniqueNewEvents.forEach(event => 
+                  processedTxHashesRef.current.add(event.transactionHash)
+                );
+
                 setSwapEvents(prev => {
-                  const combined = [...newEvents, ...prev];
+                  const combined = [...uniqueNewEvents, ...prev];
                   return combined.sort((a, b) => b.timestamp - a.timestamp);
                 });
               }
@@ -139,9 +190,9 @@ const SwapEvent = () => {
               break;
             } catch (error) {
               retryCount++;
-              console.error(`Error querying blocks ${fromBlock} to ${toBlock} (Attempt ${retryCount}/${maxRetries}):`, error);
+              console.error(`Error querying blocks ${batchFromBlock} to ${toBlock} (Attempt ${retryCount}/${maxRetries}):`, error);
               if (retryCount === maxRetries) {
-                console.error(`Failed to query blocks ${fromBlock} to ${toBlock} after ${maxRetries} attempts`);
+                console.error(`Failed to query blocks ${batchFromBlock} to ${toBlock} after ${maxRetries} attempts`);
               }
               await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
             }
@@ -152,13 +203,13 @@ const SwapEvent = () => {
       }
     };
 
-    setupEventListeners();
+    setupPolling();
 
     // Cleanup function
     return () => {
       isSubscribed = false;
-      if (contract) {
-        contract.removeAllListeners();
+      if (pollingInterval) {
+        clearInterval(pollingInterval);
       }
     };
   }, [walletProvider, chainId, isConnected, address]);
@@ -209,15 +260,56 @@ const SwapEvent = () => {
       </table>
       
       <div className="pagination">
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
-          <button
-            key={number}
-            onClick={() => handlePageChange(number)}
-            className={`page-button ${currentPage === number ? 'active' : ''}`}
-          >
-            {number}
-          </button>
-        ))}
+        {(() => {
+          const pages = [];
+          if (totalPages <= 5) {
+            // 如果总页数小于等于5，显示所有页码
+            for (let i = 1; i <= totalPages; i++) {
+              pages.push(
+                <button
+                  key={i}
+                  onClick={() => handlePageChange(i)}
+                  className={`page-button ${currentPage === i ? 'active' : ''}`}
+                >
+                  {i}
+                </button>
+              );
+            }
+          } else {
+            // 如果总页数大于5，显示前3页、省略号和最后一页
+            // 前3页
+            for (let i = 1; i <= 3; i++) {
+              pages.push(
+                <button
+                  key={i}
+                  onClick={() => handlePageChange(i)}
+                  className={`page-button ${currentPage === i ? 'active' : ''}`}
+                >
+                  {i}
+                </button>
+              );
+            }
+            
+            // 省略号
+            pages.push(
+              <span key="ellipsis" className="page-ellipsis">
+                ...
+              </span>
+            );
+            
+            // 最后一页
+            pages.push(
+              <button
+                key={totalPages}
+                onClick={() => handlePageChange(totalPages)}
+                className={`page-button ${currentPage === totalPages ? 'active' : ''}`}
+              >
+                {totalPages}
+              </button>
+            );
+          }
+          return pages;
+        })()}
       </div>
     </div>
   );
