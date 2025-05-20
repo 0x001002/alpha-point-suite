@@ -196,13 +196,15 @@ export const Approve = () => {
                     value={selectedTime}
                     onChange={(e) => setSelectedTime(e.target.value)}
                 >
-                    <option value="0">0 mins</option>
-                    {[10, 20, 30, 40, 50, 60].map((minutes) => (
+                    <option value="0">0 分钟</option>
+                    {[10, 20, 30, 60].map((minutes) => (
                         <option key={minutes} value={minutes}>
-                            {minutes} mins
+                            {minutes} 分钟
                         </option>
                     ))}
-                    <option value="unlimited">无限制</option>
+                    <option value="1440">1 天</option>
+                    <option value="43200">1 个月</option>
+                    <option value="525600">1 年</option>
                 </select>
                 <span className={styles.selectLabel}>设置有效期</span>
             </div>

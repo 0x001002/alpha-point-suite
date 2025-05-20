@@ -31,8 +31,8 @@ const SwapEvent = () => {
 
   useEffect(() => {
     const fetchSwapEvents = async () => {
-      if (!walletProvider || !isConnected || !chainId) {
-        console.log('Provider not ready:', { walletProvider, isConnected, chainId });
+      if (!walletProvider || !chainId || !address) {
+        console.log('Provider or address not ready:', { walletProvider, chainId, address });
         return;
       }
 
@@ -40,14 +40,35 @@ const SwapEvent = () => {
         const provider = new BrowserProvider(walletProvider, chainId);
         const AlphaBot = "0x3ad264b758A6E1EC76b3099d644263db12BCb490";
         const AlphaBot_ABI = [
-          "event Swap(address indexed sender, address fromToken, address toToken, uint256 fee)",
+          "event SwapTo(address indexed sender, address fromToken, address toToken, uint256 fee)",
         ];
 
         const AlphaBotContract = new ethers.Contract(AlphaBot, AlphaBot_ABI, provider);
         
-        // Set up event listener for new swaps
-        AlphaBotContract.on("Swap", (sender, fromToken, toToken, amount, fee) => {
-          if (sender.toLowerCase() === address?.toLowerCase()) {
+        // 清除之前的事件监听器
+        AlphaBotContract.removeAllListeners();
+        
+        // 获取历史事件
+        const filter = AlphaBotContract.filters.SwapTo(address);
+        const events = await AlphaBotContract.queryFilter(filter, -10000, "latest");
+        
+        // 处理历史事件
+        const historicalEvents = events.map(event => {
+          const log = event as ethers.EventLog;
+          return {
+            address: log.args[0].toString(),
+            fromToken: log.args[1].toString(),
+            toToken: log.args[2].toString(),
+            fee: ethers.formatEther(log.args[3]),
+            timestamp: Math.floor(Date.now() / 1000),
+          };
+        });
+        
+        setSwapEvents(historicalEvents);
+        
+        // 设置新事件的监听器
+        AlphaBotContract.on("SwapTo", (sender, fromToken, toToken, fee) => {
+          if (sender.toLowerCase() === address.toLowerCase()) {
             setSwapEvents(prev => [{
               address: sender,
               fromToken,
@@ -67,7 +88,7 @@ const SwapEvent = () => {
     };
 
     fetchSwapEvents();
-  }, [walletProvider, chainId, isConnected, address]);
+  }, [walletProvider, chainId, address]);
 
   // Calculate pagination
   const indexOfLastEvent = currentPage * eventsPerPage;
