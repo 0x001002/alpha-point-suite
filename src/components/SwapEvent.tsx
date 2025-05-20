@@ -35,7 +35,7 @@ const SwapEvent = () => {
     let isSubscribed = true;
     let contract: ethers.Contract | null = null;
 
-    const fetchSwapEvents = async () => {
+    const setupEventListeners = async () => {
       if (!walletProvider || !chainId || !address) {
         console.log('Provider or address not ready:', { walletProvider, chainId, address });
         return;
@@ -48,79 +48,55 @@ const SwapEvent = () => {
           "event SwapTo(address indexed sender, address fromToken, address toToken, uint256 fee)",
         ];
 
-        contract = new ethers.Contract(AlphaBot, AlphaBot_ABI, provider);
-        
-        // Clear any existing listeners
+        // 确保之前的合约实例被清理
         if (contract) {
           contract.removeAllListeners();
         }
 
-        // Set up new event listener with reconnection logic
-        if (contract && isSubscribed) {
-          const setupEventListener = () => {
-            if (!isSubscribed || !contract) return;
+        contract = new ethers.Contract(AlphaBot, AlphaBot_ABI, provider);
 
-            contract.on("SwapTo", async (sender, fromToken, toToken, fee, event) => {
-              if (!isSubscribed) return;
-              
-              if (sender.toLowerCase() === address.toLowerCase()) {
-                try {
-                  const block = await provider.getBlock(event.blockNumber);
-                  const newEvent = {
-                    address: sender,
-                    fromToken,
-                    toToken,
-                    fee: ethers.formatEther(fee),
-                    timestamp: block?.timestamp || Math.floor(Date.now() / 1000),
-                    transactionHash: event.log.transactionHash,
-                  };
-                  console.log('New swap event received:', newEvent);
-                  setSwapEvents(prev => [newEvent, ...prev]);
-                } catch (error) {
-                  console.error('Error processing new swap event:', error);
-                }
-              }
-            });
-
-            // Handle connection errors
-            contract.on("error", (error) => {
-              console.error("Contract event listener error:", error);
-              // Remove all listeners
-              contract?.removeAllListeners();
-              // Attempt to reconnect after a delay
-              setTimeout(() => {
-                if (isSubscribed && contract) {
-                  console.log("Attempting to reconnect event listener...");
-                  setupEventListener();
-                }
-              }, 5000); // 5 second delay before reconnecting
-            });
-          };
-
-          // Initial setup
-          setupEventListener();
-
-          // Set up network status monitoring
-          const handleNetworkChange = () => {
-            if (isSubscribed && contract) {
-              console.log("Network status changed, reconnecting event listener...");
-              contract.removeAllListeners();
-              setupEventListener();
+        // 设置事件监听器
+        contract.on("SwapTo", async (sender, fromToken, toToken, fee, event) => {
+          if (!isSubscribed) return;
+          
+          try {
+            if (sender.toLowerCase() === address.toLowerCase()) {
+              const block = await provider.getBlock(event.blockNumber);
+              const newEvent = {
+                address: sender,
+                fromToken,
+                toToken,
+                fee: ethers.formatEther(fee),
+                timestamp: block?.timestamp || Math.floor(Date.now() / 1000),
+                transactionHash: event.log.transactionHash,
+              };
+              console.log('New swap event received:', newEvent);
+              setSwapEvents(prev => [newEvent, ...prev]);
             }
-          };
+          } catch (error) {
+            console.error('Error processing swap event:', error);
+          }
+        });
 
-          // Listen for network changes
-          window.addEventListener('online', handleNetworkChange);
-          window.addEventListener('offline', handleNetworkChange);
+        // 监听网络变化
+        provider.on('network', (newNetwork, oldNetwork) => {
+          if (oldNetwork) {
+            console.log('Network changed, reconnecting...');
+            setupEventListeners();
+          }
+        });
 
-          // Cleanup network listeners
-          return () => {
-            window.removeEventListener('online', handleNetworkChange);
-            window.removeEventListener('offline', handleNetworkChange);
-          };
-        }
-        
-        // Get historical events - batch query
+        // 获取历史事件
+        await fetchHistoricalEvents(provider, contract);
+      } catch (error) {
+        console.error('Error setting up event listeners:', error);
+      }
+    };
+
+    const fetchHistoricalEvents = async (provider: BrowserProvider, contract: ethers.Contract) => {
+      if (!isSubscribed || !address) return;
+
+      try {
         const filter = contract.filters.SwapTo(address);
         const batchSize = 1000;
         const maxBlocks = 50000;
@@ -129,7 +105,7 @@ const SwapEvent = () => {
         const currentBlock = await provider.getBlockNumber();
         
         for (let toBlock = currentBlock; toBlock > currentBlock - maxBlocks; toBlock -= batchSize) {
-          if (!isSubscribed) break; // Check if component is still mounted
+          if (!isSubscribed) break;
           
           const fromBlock = Math.max(toBlock - batchSize + 1, currentBlock - maxBlocks);
           let retryCount = 0;
@@ -139,7 +115,6 @@ const SwapEvent = () => {
             try {
               const batchEvents = await contract.queryFilter(filter, fromBlock, toBlock);
               allEvents = [...allEvents, ...batchEvents];
-              console.log(`Queried blocks ${fromBlock} to ${toBlock}`);
               
               const newEvents = await Promise.all(batchEvents.map(async event => {
                 const log = event as EventLog;
@@ -173,11 +148,11 @@ const SwapEvent = () => {
           }
         }
       } catch (error) {
-        console.error('Error in fetchSwapEvents:', error);
+        console.error('Error fetching historical events:', error);
       }
     };
 
-    fetchSwapEvents();
+    setupEventListeners();
 
     // Cleanup function
     return () => {
