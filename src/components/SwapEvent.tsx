@@ -55,29 +55,69 @@ const SwapEvent = () => {
           contract.removeAllListeners();
         }
 
-        // Set up new event listener first
+        // Set up new event listener with reconnection logic
         if (contract && isSubscribed) {
-          contract.on("SwapTo", async (sender, fromToken, toToken, fee, event) => {
-            if (!isSubscribed) return; // Check if component is still mounted
-            
-            if (sender.toLowerCase() === address.toLowerCase()) {
-              try {
-                const block = await provider.getBlock(event.blockNumber);
-                const newEvent = {
-                  address: sender,
-                  fromToken,
-                  toToken,
-                  fee: ethers.formatEther(fee),
-                  timestamp: block?.timestamp || Math.floor(Date.now() / 1000),
-                  transactionHash: event.log.transactionHash,
-                };
-                console.log('New swap event received:', newEvent);
-                setSwapEvents(prev => [newEvent, ...prev]);
-              } catch (error) {
-                console.error('Error processing new swap event:', error);
+          const setupEventListener = () => {
+            if (!isSubscribed || !contract) return;
+
+            contract.on("SwapTo", async (sender, fromToken, toToken, fee, event) => {
+              if (!isSubscribed) return;
+              
+              if (sender.toLowerCase() === address.toLowerCase()) {
+                try {
+                  const block = await provider.getBlock(event.blockNumber);
+                  const newEvent = {
+                    address: sender,
+                    fromToken,
+                    toToken,
+                    fee: ethers.formatEther(fee),
+                    timestamp: block?.timestamp || Math.floor(Date.now() / 1000),
+                    transactionHash: event.log.transactionHash,
+                  };
+                  console.log('New swap event received:', newEvent);
+                  setSwapEvents(prev => [newEvent, ...prev]);
+                } catch (error) {
+                  console.error('Error processing new swap event:', error);
+                }
               }
+            });
+
+            // Handle connection errors
+            contract.on("error", (error) => {
+              console.error("Contract event listener error:", error);
+              // Remove all listeners
+              contract?.removeAllListeners();
+              // Attempt to reconnect after a delay
+              setTimeout(() => {
+                if (isSubscribed && contract) {
+                  console.log("Attempting to reconnect event listener...");
+                  setupEventListener();
+                }
+              }, 5000); // 5 second delay before reconnecting
+            });
+          };
+
+          // Initial setup
+          setupEventListener();
+
+          // Set up network status monitoring
+          const handleNetworkChange = () => {
+            if (isSubscribed && contract) {
+              console.log("Network status changed, reconnecting event listener...");
+              contract.removeAllListeners();
+              setupEventListener();
             }
-          });
+          };
+
+          // Listen for network changes
+          window.addEventListener('online', handleNetworkChange);
+          window.addEventListener('offline', handleNetworkChange);
+
+          // Cleanup network listeners
+          return () => {
+            window.removeEventListener('online', handleNetworkChange);
+            window.removeEventListener('offline', handleNetworkChange);
+          };
         }
         
         // Get historical events - batch query
