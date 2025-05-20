@@ -169,7 +169,7 @@ const SwapEvent = () => {
       <table className="swap-event-table">
         <thead>
           <tr>
-            <th>交易</th>
+            <th>交易哈希</th>
             {/* <th>From Token</th>
             <th>To Token</th> */}
             <th>费用</th>
