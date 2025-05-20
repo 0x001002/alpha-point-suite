@@ -9,10 +9,8 @@ import {
 } from "@reown/appkit/react";
 import {
   BrowserProvider,
-  Contract,
   type EventLog,
 } from "ethers";
-import { JsonRpcProvider } from 'ethers';
 import { ethers } from 'ethers';
 import './SwapEvent.css';
 
