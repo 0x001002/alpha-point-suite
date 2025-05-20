@@ -84,30 +84,32 @@ const SwapEvent = () => {
         }
         
         // 处理历史事件
-        const historicalEvents = allEvents.map(event => {
+        const historicalEvents = await Promise.all(allEvents.map(async event => {
           const log = event as EventLog;
+          const block = await provider.getBlock(event.blockNumber);
           return {
             address: log.args[0].toString(),
             fromToken: log.args[1].toString(),
             toToken: log.args[2].toString(),
             fee: ethers.formatEther(log.args[3]),
-            timestamp: Math.floor(Date.now() / 1000),
+            timestamp: block?.timestamp || Math.floor(Date.now() / 1000),
             transactionHash: log.transactionHash,
           };
-        });
+        }));
         
         setSwapEvents(historicalEvents);
         
         // 设置新事件的监听器
-        AlphaBotContract.on("SwapTo", (sender, fromToken, toToken, fee) => {
+        AlphaBotContract.on("SwapTo", async (sender, fromToken, toToken, fee, event) => {
           if (sender.toLowerCase() === address.toLowerCase()) {
+            const block = await provider.getBlock(event.blockNumber);
             setSwapEvents(prev => [{
               address: sender,
               fromToken,
               toToken,
               fee: ethers.formatEther(fee),
-              timestamp: Math.floor(Date.now() / 1000),
-              transactionHash: "",
+              timestamp: block?.timestamp || Math.floor(Date.now() / 1000),
+              transactionHash: event.transactionHash,
             }, ...prev]);
           }
         });
@@ -118,17 +120,18 @@ const SwapEvent = () => {
           try {
             const newEvents = await AlphaBotContract.queryFilter(filter, blockNumber, blockNumber);
             if (newEvents.length > 0) {
-              const processedEvents = newEvents.map(event => {
+              const processedEvents = await Promise.all(newEvents.map(async event => {
                 const log = event as EventLog;
+                const block = await provider.getBlock(event.blockNumber);
                 return {
                   address: log.args[0].toString(),
                   fromToken: log.args[1].toString(),
                   toToken: log.args[2].toString(),
                   fee: ethers.formatEther(log.args[3]),
-                  timestamp: Math.floor(Date.now() / 1000),
+                  timestamp: block?.timestamp || Math.floor(Date.now() / 1000),
                   transactionHash: log.transactionHash,
                 };
-              });
+              }));
               setSwapEvents(prev => [...processedEvents, ...prev]);
             }
           } catch (error) {
@@ -164,7 +167,7 @@ const SwapEvent = () => {
       <table className="swap-event-table">
         <thead>
           <tr>
-            <th>地址</th>
+            <th>交易</th>
             {/* <th>From Token</th>
             <th>To Token</th> */}
             <th>费用</th>
@@ -175,7 +178,7 @@ const SwapEvent = () => {
         <tbody>
           {currentEvents.map((event, index) => (
             <tr key={index}>
-              <td className="address-column">{event.address}</td>
+              <td className="address-column">{event.transactionHash}</td>
               {/* <td>{event.fromToken}</td>
               <td>{event.toToken}</td> */}
               <td>{event.fee} BNB</td>
