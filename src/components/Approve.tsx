@@ -197,8 +197,8 @@ export const Approve = () => {
                 >
                     <option value="0">0 分钟</option>
                     <option value="60">1 小时</option>
-                    <option value="10080">1 周</option>
                     <option value="1440">1 天</option>
+                    <option value="10080">1 周</option>
                     <option value="43200">1 个月</option>
                     <option value="525600">1 年</option>
                 </select>

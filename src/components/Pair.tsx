@@ -26,7 +26,7 @@ export default function Pair(props: PairProps) {
                     selectedPair?.token1Symbol === props.token1Symbol;
 
   const handleClick = () => {
-    setShowModal(true);
+    // setShowModal(true);
   };
 
   return (
@@ -68,11 +68,11 @@ export default function Pair(props: PairProps) {
             </div>
           </div>
         </div>
-        <div className={styles.dropdownIcon}>
+        {/* <div className={styles.dropdownIcon}>
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M5 7.5L10 12.5L15 7.5" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-        </div>
+        </div> */}
       </div>
 
       <Modal
