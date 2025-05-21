@@ -27,7 +27,7 @@ const SwapEvent = () => {
   const { address, isConnected } = useAppKitAccount();
   const { chainId } = useAppKitNetworkCore();
   const { walletProvider } = useAppKitProvider<Provider>("eip155");
-  const { swapEvents, setSwapEvents, isHistoricalEventsLoaded, setIsHistoricalEventsLoaded } = usePair();
+  const { swapEvents, setSwapEvents, setIsHistoricalEventsLoaded } = usePair();
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 5;
   const lastProcessedBlockRef = useRef<number>(0);

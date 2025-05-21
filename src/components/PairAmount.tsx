@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import {
   useAppKitAccount,
   useAppKitProvider,
-  useAppKitNetworkCore,
   type Provider,
 } from "@reown/appkit/react";
 import './PairAmount.css';
@@ -17,7 +16,7 @@ interface PairAmount {
 }
 
 const PairAmount = () => { 
-    const { address, isConnected } = useAppKitAccount();
+    const { isConnected } = useAppKitAccount();
     const { walletProvider } = useAppKitProvider<Provider>("eip155");
     const { swapEvents, isHistoricalEventsLoaded } = usePair();
     const [pairAmounts, setPairAmounts] = useState<PairAmount[]>([]);
