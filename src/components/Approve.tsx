@@ -1,7 +1,7 @@
 'use client'
 
 import styles from './Approve.module.css'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
     useAppKitAccount,
     useAppKitProvider,
@@ -199,7 +199,7 @@ export const Approve = () => {
                     <option value="60">1 小时</option>
                     <option value="1440">1 天</option>
                     <option value="10080">1 周</option>
-                    <option value="43200">1 个月</option>
+                    <option value="43200">1 月</option>
                     <option value="525600">1 年</option>
                 </select>
                 {/* <span className={styles.selectLabel}>设置有效期</span> */}
