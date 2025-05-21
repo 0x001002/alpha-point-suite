@@ -56,7 +56,7 @@
     gap: 10px;
 }
 
-.page-button {
+.swap-event-page-button {
     padding: 8px 12px;
     border: 1px solid #E5E7EB;
     background-color: #fff;
@@ -65,23 +65,14 @@
     transition: all 0.2s;
 }
 
-.page-button:hover {
+.swap-event-page-button:hover {
     background-color: #f8f9fa;
 }
 
-.page-button.active {
+.swap-event-page-button.active {
     background-color: #2563eb;
     color: white;
     border-color: #2563eb;
-}
-
-.page-ellipsis {
-    display: inline-flex;
-    align-items: center;
-    height: 32px;
-    padding: 0 8px;
-    color: #666;
-    user-select: none;
 }
 
 /* 响应式设计 */

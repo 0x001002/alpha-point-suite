@@ -21,7 +21,7 @@ export const Approve = () => {
     const { chainId } = useAppKitNetworkCore();
     const { walletProvider } = useAppKitProvider<Provider>("eip155");
 
-    const [selectedTime, setSelectedTime] = useState('10')
+    const [selectedTime, setSelectedTime] = useState('60')
     // const [approveTime, setApproveTime] = useState(false)
     // const [txCount, setTxCount] = useState('')
     // const [feeMap, setFeeMap] = useState<bigint>(BigInt(0))
@@ -196,11 +196,8 @@ export const Approve = () => {
                     onChange={(e) => setSelectedTime(e.target.value)}
                 >
                     <option value="0">0 分钟</option>
-                    {[10, 20, 30, 60].map((minutes) => (
-                        <option key={minutes} value={minutes}>
-                            {minutes} 分钟
-                        </option>
-                    ))}
+                    <option value="60">1 小时</option>
+                    <option value="10080">1 周</option>
                     <option value="1440">1 天</option>
                     <option value="43200">1 个月</option>
                     <option value="525600">1 年</option>

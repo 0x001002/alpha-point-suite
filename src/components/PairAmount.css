@@ -1,0 +1,97 @@
+.pair-amount-container {
+    padding: 20px;
+    background-color: #ffffff;
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #E5E7EB;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 10px 0;
+}
+
+.pair-amount-container h3 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.pair-amount-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+}
+
+.pair-amount-table th,
+.pair-amount-table td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    font-size: 0.9rem;
+}
+
+.pair-amount-table th {
+    background-color: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+}
+
+.pair-amount-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.pair-amount-table tr:last-child td {
+    border-bottom: none;
+}
+
+.amount-column {
+    font-family: monospace;
+    text-align: right;
+    font-weight: 500;
+}
+
+.token-column {
+    font-weight: 500;
+    color: black;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.page-button {
+    padding: 8px 16px;
+    border-radius: 6px;
+    background-color: #f7bc27;
+    color: white;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.page-button:hover {
+    background-color: #f7bc27c5;
+}
+
+.page-button:disabled {
+    background-color: #9CA3AF;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+
+/* 响应式设计 */
+@media screen and (max-width: 768px) {
+    .pair-amount-container {
+        padding: 10px;
+        margin: 5px 0;
+    }
+
+    .pair-amount-table th,
+    .pair-amount-table td {
+        padding: 8px 10px;
+        font-size: 0.85rem;
+    }
+}

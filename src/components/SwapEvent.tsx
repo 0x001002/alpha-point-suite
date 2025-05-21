@@ -12,6 +12,7 @@ import {
 } from "ethers";
 import { ethers } from 'ethers';
 import './SwapEvent.css';
+import { usePair } from '@/context/PairContext';
 
 interface SwapEvent {
   address: string;
@@ -26,7 +27,7 @@ const SwapEvent = () => {
   const { address, isConnected } = useAppKitAccount();
   const { chainId } = useAppKitNetworkCore();
   const { walletProvider } = useAppKitProvider<Provider>("eip155");
-  const [swapEvents, setSwapEvents] = useState<SwapEvent[]>([]);
+  const { swapEvents, setSwapEvents, isHistoricalEventsLoaded, setIsHistoricalEventsLoaded } = usePair();
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 5;
   const lastProcessedBlockRef = useRef<number>(0);
@@ -130,10 +131,20 @@ const SwapEvent = () => {
 
       try {
         const batchSize = 1000;
-        const maxBlocks = 50000;
+        const today = new Date();
+        const utcToday = new Date(Date.UTC(
+            today.getUTCFullYear(),
+            today.getUTCMonth(),
+            today.getUTCDate(),
+            0, 0, 0, 0
+        ));
+        const todayTimestamp = Math.floor(utcToday.getTime() / 1000);
         
         const currentBlock = await provider.getBlockNumber();
-        const fromBlock = Math.max(currentBlock - maxBlocks, 0);
+        const blockTime = Math.floor(Date.now() / 1000) - todayTimestamp;
+        const secondsPerBlock = 1.5; // BSC produces a block every 1.5 seconds
+        const blocksInTheDay = Math.floor(blockTime / secondsPerBlock);
+        const fromBlock = Math.max(currentBlock - blocksInTheDay, 0);
         
         for (let toBlock = currentBlock; toBlock > fromBlock; toBlock -= batchSize) {
           if (!isSubscribed) break;
@@ -149,8 +160,8 @@ const SwapEvent = () => {
                 fromBlock: batchFromBlock,
                 toBlock,
                 topics: [
-                  ethers.id("SwapTo(address,address,address,uint256)"),  // 事件签名
-                  ethers.zeroPadValue(address, 32)  // 发送者地址（第一个 indexed 参数）
+                  ethers.id("SwapTo(address,address,address,uint256)"),
+                  ethers.zeroPadValue(address, 32)
                 ]
               });
               
@@ -167,7 +178,6 @@ const SwapEvent = () => {
                 };
               }));
 
-              // Filter out duplicates
               const uniqueNewEvents = newEvents.filter(event => 
                 !processedTxHashesRef.current.has(event.transactionHash)
               );
@@ -194,8 +204,10 @@ const SwapEvent = () => {
             }
           }
         }
+        setIsHistoricalEventsLoaded(true);
       } catch (error) {
         console.error('Error fetching historical events:', error);
+        setIsHistoricalEventsLoaded(true); // 即使出错也标记为完成
       }
     };
 
@@ -208,7 +220,7 @@ const SwapEvent = () => {
         clearInterval(pollingInterval);
       }
     };
-  }, [walletProvider, chainId, isConnected, address]);
+  }, [walletProvider, chainId, isConnected, address, setSwapEvents]);
 
   // Calculate pagination
   const indexOfLastEvent = currentPage * eventsPerPage;
@@ -227,8 +239,6 @@ const SwapEvent = () => {
         <thead>
           <tr>
             <th>交易哈希</th>
-            {/* <th>From Token</th>
-            <th>To Token</th> */}
             <th>费用</th>
             <th>时间</th>
           </tr>
@@ -246,8 +256,6 @@ const SwapEvent = () => {
                   {event.transactionHash}
                 </a>
               </td>
-              {/* <td>{event.fromToken}</td>
-              <td>{event.toToken}</td> */}
               <td>{event.fee} BNB</td>
               <td>{new Date(event.timestamp * 1000).toLocaleString()}</td>
             </tr>
@@ -258,14 +266,14 @@ const SwapEvent = () => {
       <div className="pagination">
         {(() => {
           const pages = [];
-          if (totalPages <= 5) {
+          if (totalPages <= 4) {
             // 如果总页数小于等于5，显示所有页码
             for (let i = 1; i <= totalPages; i++) {
               pages.push(
                 <button
                   key={i}
                   onClick={() => handlePageChange(i)}
-                  className={`page-button ${currentPage === i ? 'active' : ''}`}
+                  className={`swap-event-page-button ${currentPage === i ? 'active' : ''}`}
                 >
                   {i}
                 </button>
@@ -276,53 +284,42 @@ const SwapEvent = () => {
             const showPages = () => {
               const pageNumbers = [];
               
-              // 始终显示第一页
-              pageNumbers.push(1);
-              
-              // 计算当前页附近的页码，限制显示4个页码
-              const startPage = Math.max(2, currentPage - 1);
-              const endPage = Math.min(totalPages - 1, startPage + 1);
-              
-              // 调整起始和结束页码，确保显示足够的页码
-              if (startPage > 2) {
-                pageNumbers.push('...');
-              }
-              
-              for (let i = startPage; i <= endPage; i++) {
-                pageNumbers.push(i);
-              }
-              
-              if (endPage < totalPages - 1) {
-                pageNumbers.push('...');
-              }
-              
-              // 始终显示最后一页
-              if (totalPages > 1) {
-                pageNumbers.push(totalPages);
+              if (currentPage <= 2) {
+                // 如果当前页是1或2，显示1,2,3,4
+                for (let i = 1; i <= 4; i++) {
+                  if (i <= totalPages) {
+                    pageNumbers.push(i);
+                  }
+                }
+              } else if (currentPage >= totalPages - 1) {
+                // 如果当前页是最后两页，显示最后4页
+                for (let i = totalPages - 3; i <= totalPages; i++) {
+                  if (i > 0) {
+                    pageNumbers.push(i);
+                  }
+                }
+              } else {
+                // 其他情况显示当前页及其前后各一页
+                pageNumbers.push(currentPage - 1);
+                pageNumbers.push(currentPage);
+                pageNumbers.push(currentPage + 1);
+                pageNumbers.push(currentPage + 2);
               }
               
               return pageNumbers;
             };
             
             // 渲染页码按钮
-            showPages().forEach((page, index) => {
-              if (page === '...') {
-                pages.push(
-                  <span key={`ellipsis-${index}`} className="page-ellipsis">
-                    ...
-                  </span>
-                );
-              } else {
-                pages.push(
-                  <button
-                    key={page}
-                    onClick={() => handlePageChange(page as number)}
-                    className={`page-button ${currentPage === page ? 'active' : ''}`}
-                  >
-                    {page}
-                  </button>
-                );
-              }
+            showPages().forEach((page) => {
+              pages.push(
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`swap-event-page-button ${currentPage === page ? 'active' : ''}`}
+                >
+                  {page}
+                </button>
+              );
             });
           }
           return pages;

@@ -76,7 +76,7 @@ const TokenDeadline = () => {
     };
 
     fetchActiveTimeStamp();
-  }, [address, walletProvider, chainId, lastApproveTimeUpdate]);
+  }, [isConnected, address, walletProvider, chainId, lastApproveTimeUpdate]);
 
   const deadlineInfo = [
     { address: address, deadline: activeTimeStamp ? activeTimeStamp : null, status: activeTimeStamp ? (activeTimeStamp * 1000) > currentTime ? '激活中' : '已过期' : null },
@@ -163,8 +163,8 @@ const TokenDeadline = () => {
                 <td className="address-column">{info.address}</td>
                 <td>{info.deadline ? new Date(info.deadline * 1000).toLocaleString() : ''}</td>
                 <td>
-                  <span className={`status-indicator ${info.status ? (info.status === '激活中' ? 'status-active' : 'status-expired') : ''}`}>
-                    {info.status || '-'}
+                  <span className={`status-indicator ${info.status ? (info.status === '激活中' ? 'status-active' : 'status-expired') : 'status-expired'}`}>
+                    {info.status || '已过期'}
                   </span>
                 </td>
               </tr>

@@ -12,14 +12,29 @@ interface PairContextType {
   setLastApproveTimeUpdate: React.Dispatch<React.SetStateAction<number>>;
   approveToken: boolean;
   setApproveToken: React.Dispatch<React.SetStateAction<boolean>>;
+  swapEvents: SwapEvent[];
+  setSwapEvents: React.Dispatch<React.SetStateAction<SwapEvent[]>>;
+  isHistoricalEventsLoaded: boolean;
+  setIsHistoricalEventsLoaded: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+interface SwapEvent {
+  address: string;
+  fromToken: string;
+  toToken: string;
+  fee: string;
+  timestamp: number;
+  transactionHash: string;
 }
 
 const PairContext = createContext<PairContextType | undefined>(undefined);
 
 export function PairProvider({ children }: { children: ReactNode }) {
-  const [selectedPair, setSelectedPair] = useState<Pair | null>(PAIRS[1]);
+  const [selectedPair, setSelectedPair] = useState<Pair | null>(PAIRS[0]);
   const [lastApproveTimeUpdate, setLastApproveTimeUpdate] = useState<number>(Date.now());
   const [approveToken, setApproveToken] = useState<boolean>(false);
+  const [swapEvents, setSwapEvents] = useState<SwapEvent[]>([]);
+  const [isHistoricalEventsLoaded, setIsHistoricalEventsLoaded] = useState<boolean>(false);
 
   return (
     <PairContext.Provider value={{ 
@@ -28,7 +43,11 @@ export function PairProvider({ children }: { children: ReactNode }) {
       lastApproveTimeUpdate, 
       setLastApproveTimeUpdate,
       approveToken,
-      setApproveToken
+      setApproveToken,
+      swapEvents,
+      setSwapEvents,
+      isHistoricalEventsLoaded,
+      setIsHistoricalEventsLoaded
     }}>
       {children}
     </PairContext.Provider>

@@ -6,6 +6,7 @@ import { Approve } from "@/components/Approve";
 import TokenDeadline from "@/components/TokenDeadline";
 import SwapEvent from "@/components/SwapEvent";
 import Introduction from "@/components/Introduction";
+import PairAmount from "@/components/PairAmount";
 import { usePair } from "@/context/PairContext";
 
 export default function Home() {
@@ -25,15 +26,16 @@ export default function Home() {
       <div>
         <Pair
           token0Symbol={selectedPair?.token0Symbol ?? "B2"}
-          token1Symbol={selectedPair?.token1Symbol ?? "USDT"}
+          token1Symbol={selectedPair?.token1Symbol ?? "WBNB"}
           token0Icon={selectedPair?.token0Icon ?? "/pair/b2.png"}
-          token1Icon={selectedPair?.token1Icon ?? "/pair/usdt.png"}
+          token1Icon={selectedPair?.token1Icon ?? "/pair/wbnb.png"}
           fee={selectedPair?.fee ?? "0.01"}
-          tvl={selectedPair?.tvl ?? "$212.16K"}
+          tvl={selectedPair?.tvl ?? "$2.87M"}
         ></Pair>
       </div>
       <Approve />
       <TokenDeadline />
+      <PairAmount />
       <SwapEvent />
     </div>
   );

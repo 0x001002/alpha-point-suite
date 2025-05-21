@@ -7,6 +7,9 @@
     width: 100%;
     min-height: 64px;
     margin: 20px 0;
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .pairContainer:hover {
@@ -18,9 +21,10 @@
 .tableRow {
     display: flex;
     width: 100%;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     position: relative;
+    padding-right: 40px;
 }
 
 .tableRow::after {
@@ -28,7 +32,7 @@
     position: absolute;
     left: 0;
     right: 0;
-    top: 20px;
+    top: 50%;
     height: 1px;
     background-color: #E5E7EB;
     z-index: 0;
@@ -47,6 +51,9 @@
     gap: 12px;
     flex: 0 1 auto;
     padding: 0 32px;
+    position: relative;
+    z-index: 1;
+    background-color: white;
 }
 
 .tableLabel {
@@ -190,4 +197,22 @@
     .modalRowItem>*:first-child {
         margin-right: 0;
     }
+}
+
+.dropdownIcon {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease-in-out;
+    z-index: 1;
+    background-color: white;
+    padding: 0 8px;
+}
+
+.pairContainer:hover .dropdownIcon {
+    transform: translateY(-50%) translateY(2px);
 }
