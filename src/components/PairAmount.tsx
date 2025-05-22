@@ -11,7 +11,9 @@ import { usePair } from '@/context/PairContext';
 
 interface PairAmount {
     tokenSymbol: string;
-    tokenIcon: string;
+    toTokenIcon: string;
+    fromTokenSymbol: string;
+    fromTokenIcon: string;
     amount: string;
 }
 
@@ -31,7 +33,6 @@ const PairAmount = () => {
     useEffect(() => { 
         if (isConnected && walletProvider) {
             const calculatePairAmounts = () => {
-
                 // 获取今天的开始时间戳（UTC）
                 const today = new Date();
                 const utcToday = new Date(Date.UTC(
@@ -45,35 +46,48 @@ const PairAmount = () => {
                 // 过滤出今天的事件
                 const todayEvents = swapEvents.filter(event => event.timestamp >= todayTimestamp);
 
-                // 按代币分组并计算总金额
-                const tokenAmounts = new Map<string, { amount: number, icon: string }>();
+                // 按交易对分组并计算总金额
+                const pairAmountsMap = new Map<string, { amount: number, toTokenIcon: string, fromTokenIcon: string }>();
                 
                 todayEvents.forEach(event => {
                     const amount = (parseFloat(event.fee)-0.00005) * 20000;
-                    const tokenSymbol = event.fromToken === "0x783c3f003f172c6Ac5AC700218a357d2D66Ee2a2" ? "B2" :
+                    const toTokenSymbol = event.fromToken === "0x783c3f003f172c6Ac5AC700218a357d2D66Ee2a2" ? "B2" :
                                       event.fromToken === "0xc71b5f631354be6853efe9c3ab6b9590f8302e81" ? "ZJK" :
                                       event.fromToken === "0xd82544bf0dfe8385ef8fa34d67e6e4940cc63e16" ? "MYX" :
                                       event.fromToken === "0x55ad16bd573b3365f43a9daeb0cc66a73821b4a5" ? "AIOT" : "Unknown";
+                    const fromTokenSymbol = event.toToken === "0x0000000000000000000000000000000000000000" ? "BNB" : "Unknown";
                     
-                    const icon = tokenSymbol === "B2" ? "/pair/b2.png" :
-                               tokenSymbol === "ZJK" ? "/pair/zjk.png" :
-                               tokenSymbol === "MYX" ? "/pair/myx.png" :
-                               tokenSymbol === "AIOT" ? "/pair/aiot.png" : "/pair/unknown.png";
+                    const toTokenIcon = toTokenSymbol === "B2" ? "/pair/b2.png" :
+                               toTokenSymbol === "ZJK" ? "/pair/zjk.png" :
+                               toTokenSymbol === "MYX" ? "/pair/myx.png" :
+                               toTokenSymbol === "AIOT" ? "/pair/aiot.png" : "/pair/unknown.png";
+                    const fromTokenIcon = fromTokenSymbol === "BNB" ? "/pair/wbnb.png" : "/pair/unknown.png";
 
-                    if (tokenAmounts.has(tokenSymbol)) {
-                        const current = tokenAmounts.get(tokenSymbol)!;
+                    const pairKey = `${toTokenSymbol}/${fromTokenSymbol}`;
+                    
+                    if (pairAmountsMap.has(pairKey)) {
+                        const current = pairAmountsMap.get(pairKey)!;
                         current.amount += amount;
                     } else {
-                        tokenAmounts.set(tokenSymbol, { amount, icon });
+                        pairAmountsMap.set(pairKey, { 
+                            amount, 
+                            toTokenIcon,
+                            fromTokenIcon
+                        });
                     }
                 });
 
                 // 转换为数组格式
-                const amounts = Array.from(tokenAmounts.entries()).map(([symbol, data]) => ({
-                    tokenSymbol: symbol,
-                    tokenIcon: data.icon,
-                    amount: `${data.amount.toFixed(3)}BNB`
-                }));
+                const amounts = Array.from(pairAmountsMap.entries()).map(([pairKey, data]) => {
+                    const [tokenSymbol, fromTokenSymbol] = pairKey.split('/');
+                    return {
+                        tokenSymbol,
+                        toTokenIcon: data.toTokenIcon,
+                        fromTokenSymbol,
+                        fromTokenIcon: data.fromTokenIcon,
+                        amount: `${data.amount.toFixed(3)}BNB`
+                    };
+                });
 
                 setPairAmounts(amounts);
             };
@@ -118,7 +132,7 @@ const PairAmount = () => {
                     <table className="swap-event-table">
                         <thead>
                             <tr>
-                                <th>代币</th>
+                                <th>Pair</th>
                                 <th>总量（BNB）</th>
                             </tr>
                         </thead>
@@ -127,17 +141,29 @@ const PairAmount = () => {
                                 <tr key={index}>
                                     <td>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            <img 
-                                                src={pair.tokenIcon} 
-                                                alt={pair.tokenSymbol} 
-                                                style={{ 
-                                                    width: '24px', 
-                                                    height: '24px',
-                                                    borderRadius: '50%'
-                                                }} 
-                                            />
-                                            <span style={{ color: '#2563eb', fontWeight: '500' }}>
-                                                {pair.tokenSymbol}
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                <img 
+                                                    src={pair.toTokenIcon} 
+                                                    alt={pair.tokenSymbol} 
+                                                    style={{ 
+                                                        width: '24px', 
+                                                        height: '24px',
+                                                        borderRadius: '50%'
+                                                    }} 
+                                                />
+                                                <img 
+                                                    src={pair.fromTokenIcon} 
+                                                    alt={pair.fromTokenSymbol} 
+                                                    style={{ 
+                                                        width: '24px', 
+                                                        height: '24px',
+                                                        borderRadius: '50%',
+                                                        marginLeft: '-8px'
+                                                    }} 
+                                                />
+                                            </div>
+                                            <span style={{ color: 'black', fontWeight: '500' }}>
+                                                {pair.tokenSymbol}/{pair.fromTokenSymbol}
                                             </span>
                                         </div>
                                     </td>
