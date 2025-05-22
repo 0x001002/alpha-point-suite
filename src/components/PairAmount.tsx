@@ -96,7 +96,7 @@ const PairAmount = () => {
     if (!isHistoricalEventsLoaded) {
         return (
             <div className="swap-event-container">
-                <h3>今日交易统计</h3>
+                <h3>今日交易统计(UTC+0)</h3>
                 <div style={{ 
                     display: 'flex', 
                     justifyContent: 'center', 
@@ -112,7 +112,7 @@ const PairAmount = () => {
 
     return (
         <div className="swap-event-container">
-            <h3>今日交易统计</h3>
+            <h3>今日交易统计(UTC+0)</h3>
             {currentItems.length > 0 ? (
                 <>
                     <table className="swap-event-table">
