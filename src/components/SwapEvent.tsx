@@ -32,7 +32,7 @@ const SwapEvent = () => {
   const eventsPerPage = 5;
   const lastProcessedBlockRef = useRef<number>(0);
   const processedTxHashesRef = useRef<Set<string>>(new Set());
-  const ALPHA_BOT_ADDRESS = "0xcb4C74125CE9f3240DedAE1bf087208C549B1d39";
+  const ALPHA_BOT_ADDRESS = "0x166575957e650759a37d1b614F10a4ae722EdF12";
 
   useEffect(() => {
     let isSubscribed = true;

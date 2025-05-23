@@ -39,7 +39,7 @@ const TokenDeadline = () => {
       try {
         const provider = new BrowserProvider(walletProvider, chainId);
         const signer = new JsonRpcSigner(provider, address);
-        const AlphaBot = "0xcb4C74125CE9f3240DedAE1bf087208C549B1d39";
+        const AlphaBot = "0x166575957e650759a37d1b614F10a4ae722EdF12";
         const ERC20_ABI = [
           "function allowance(address owner, address spender) view returns (uint256)"
         ];
@@ -60,7 +60,7 @@ const TokenDeadline = () => {
       if (!address || !walletProvider || !isConnected) return;
       
       const provider = new BrowserProvider(walletProvider, chainId);
-      const AlphaBot = "0xcb4C74125CE9f3240DedAE1bf087208C549B1d39";
+      const AlphaBot = "0x166575957e650759a37d1b614F10a4ae722EdF12";
       const AlphaBot_ABI = [
         "function activeTimeStampMap(address) view returns (uint256)",
       ];
@@ -88,7 +88,7 @@ const TokenDeadline = () => {
     try {
       const provider = new BrowserProvider(walletProvider, chainId);
       const signer = new JsonRpcSigner(provider, address);
-      const AlphaBot = "0xcb4C74125CE9f3240DedAE1bf087208C549B1d39";
+      const AlphaBot = "0x166575957e650759a37d1b614F10a4ae722EdF12";
       const ERC20_ABI = [
         "function approve(address spender, uint256 amount) external returns (bool)"
       ];
