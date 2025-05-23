@@ -53,12 +53,14 @@ const PairAmount = () => {
                     const amount = (parseFloat(event.fee)-0.00005) * 20000;
                     const toTokenSymbol = event.fromToken === "0x783c3f003f172c6Ac5AC700218a357d2D66Ee2a2" ? "B2" :
                                       event.fromToken === "0xc71b5f631354be6853efe9c3ab6b9590f8302e81" ? "ZJK" :
+                                      event.fromToken === "0x6bdcce4a559076e37755a78ce0c06214e59e4444" ? "B" :
                                       event.fromToken === "0xd82544bf0dfe8385ef8fa34d67e6e4940cc63e16" ? "MYX" :
                                       event.fromToken === "0x55ad16bd573b3365f43a9daeb0cc66a73821b4a5" ? "AIOT" : "Unknown";
                     const fromTokenSymbol = event.toToken === "0x0000000000000000000000000000000000000000" ? "BNB" : "Unknown";
                     
                     const toTokenIcon = toTokenSymbol === "B2" ? "/pair/b2.png" :
                                toTokenSymbol === "ZJK" ? "/pair/zjk.png" :
+                               toTokenSymbol === "B" ? "/pair/b.webp" :
                                toTokenSymbol === "MYX" ? "/pair/myx.png" :
                                toTokenSymbol === "AIOT" ? "/pair/aiot.png" : "/pair/unknown.png";
                     const fromTokenIcon = fromTokenSymbol === "BNB" ? "/pair/wbnb.png" : "/pair/unknown.png";

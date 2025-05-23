@@ -19,6 +19,15 @@ export const PAIRS = [
     tvl: "$3.34M",
     alphaTokenAddress: "0xc71b5f631354be6853efe9c3ab6b9590f8302e81"
   },
+    {
+    token0Symbol: "B",
+    token1Symbol: "WBNB",
+    token0Icon: "/pair/b.jpg",
+    token1Icon: "/pair/wbnb.png",
+    fee: "0.01",
+    tvl: "$3.34M",
+    alphaTokenAddress: "0x6bdcce4a559076e37755a78ce0c06214e59e4444"
+  },
   {
     token0Symbol: "MYX",
     token1Symbol: "WBNB",
